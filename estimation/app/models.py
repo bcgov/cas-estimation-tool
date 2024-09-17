@@ -20,12 +20,12 @@ class GithubIssue(models.Model):
 
 
 class EstimationSession(models.Model):
-    issue = models.ForeignKey(GithubIssue)
+    issue = models.ForeignKey(GithubIssue, on_delete=models.CASCADE)
     final_estimate = models.IntegerField(null=True, blank=True)
     is_open = models.BooleanField(default=True)
 
 
 class Vote(models.Model):
-    user = models.ForeignKey(GithubUser)
-    estimation_session = models.ForeignKey(EstimationSession)
+    user = models.ForeignKey(GithubUser, on_delete=models.CASCADE)
+    estimation_session = models.ForeignKey(EstimationSession, on_delete=models.CASCADE)
     vote = models.IntegerField(null=True, blank=True)
