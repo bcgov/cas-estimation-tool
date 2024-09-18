@@ -1,0 +1,30 @@
+{% extends "base.html" %} 
+
+{% block title %} Select Isuse {% endblock %} 
+
+
+{% block content %}
+<div class="w3-row w3-padding-32">
+  <div class="w3-col">
+    <div class="w3-card-4">
+      <div class="w3-container w3-theme">
+        <h2>Select issue to estimate</h2>
+      </div>
+      <form action="select_issue" method="post" class="w3-container">
+        {% csrf_token %}
+        <div class="w3-row w3-margin">
+          <div class="w3-col">
+            <label for="issue_url">Issue URL:</label>
+            <input id="issue_url" name="issue_url" class="w3-input" type="text" placeholder="The github issue URL, i.e. https://github.com/bcgov/cas-estimation-tool/issues/4" value="{{ issue_url }}"/>
+          </div>
+        </div>
+        <div class="w3-row w3-margin">
+          <div class="w3-col">
+            <input type="submit" value="Find Issue" class="w3-button w3-theme w3-right"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

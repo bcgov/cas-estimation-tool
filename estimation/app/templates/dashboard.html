@@ -6,7 +6,7 @@
 
 
 {% block content %}
-<div class="w3-display-container" style="min-height: 400px; margin-top: 55px;">
+<div class="w3-display-container" style="min-height: 400px;">
   <div class="w3-row">
     <div class="w3-col">
       <img
@@ -20,12 +20,12 @@
   </div>
   <div class="w3-row">
     <div class="w3-col">
-      <button class="w3-button w3-display-left">
+      <a class="w3-button w3-display-left w3-theme" href={% url "select_issue" %}>
         + Add Issue For Estimation
-      </button>
+      </a>
     </div>
   </div>
-  <div class="w3-row-padding">
+  <div class="w3-row w3-row-padding">
     {% for estimation_session in estimation_sessions %}
     <div class="w3-col s6 m4 l3">
       <div
