@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class GithubUser(models.Model):
@@ -15,6 +16,8 @@ class GithubUser(models.Model):
     )
 
     avatar_url = models.URLField(blank=True, null=True)
+    token_expires = models.DateTimeField(null=True, blank=True)
+    token_created = models.DateTimeField(null=True, blank=True, default=timezone.now)
 
 
 def __str__(self):
