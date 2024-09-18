@@ -5,21 +5,20 @@ class GithubUser(models.Model):
     handle = models.CharField(
         max_length=1000,
         db_comment="The github handle for the user, without the '@github' part.",
+        primary_key=True,
     )
     access_token = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        db_comment="GitHub access token for OAuth authentication."
+        db_comment="GitHub access token for OAuth authentication.",
     )
 
     avatar_url = models.URLField(blank=True, null=True)
 
 
 def __str__(self):
-        return self.handle
-
-
+    return self.handle
 
 
 class GithubIssue(models.Model):
