@@ -1,5 +1,46 @@
-<!-- dashboard.html -->
-<div class="w3-bar-item">
-    <img src="{{ avatar_url }}" alt="Profile Picture" class="w3-circle" style="width: 50px; height: 50px; border-radius:50% ">
-    <label class="w3-button">Welcome, {{ github_handle }}!</label>
+{% extends "base.html" %} 
+
+{% load static %} 
+
+{% block title %} GitHub Async Estimation Tool {% endblock %} 
+
+
+{% block content %}
+<div class="w3-display-container" style="min-height: 400px">
+  <div class="w3-row">
+    <div class="w3-col">
+      <img
+      src="{{ avatar_url }}"
+      alt="Profile Picture"
+      class="w3-circle"
+      style="width: 50px; height: 50px; border-radius: 50%"
+    />
+      <h3>Issues awaiting votes for {{ user.handle }}@github:</h3>
+    </div>
+  </div>
+  <div class="w3-row">
+    <div class="w3-col">
+      <button class="w3-button w3-display-left">
+        + Add Issue For Estimation
+      </button>
+    </div>
+  </div>
+  <div class="w3-row-padding">
+    {% for estimation_session in estimation_sessions %}
+    <div class="w3-col s6 m4 l3">
+      <div
+        class="w3-card-2 {% if estimation_session.is_open %} w3-green{% else %} w3-red{% endif %}"
+      >
+        <div class="w3-container w3-center">
+          <p>
+            Issue
+            {{estimation_session.issue.repo}}/#{{estimation_session.issue.issue_id}}
+          </p>
+          <p>this is a title</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 </div>
+{% endblock %}
