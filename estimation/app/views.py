@@ -5,8 +5,8 @@ from app.models import EstimationSession, GithubIssue, GithubUser
 from estimation import settings
 
 
-from estimation.app.view_models.dashboard_view_model import DashboardViewModel
-from estimation.app.view_models.index_view_model import IndexViewModel
+from .view_models.dashboard_view_model import DashboardViewModel
+from .view_models.index_view_model import IndexViewModel
 
 
 def index(request: HttpRequest):
