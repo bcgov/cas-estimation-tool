@@ -28,6 +28,13 @@ class GithubIssue(models.Model):
     )
     issue_id = models.IntegerField(db_comment="The issue number.")
 
+    title = models.CharField(
+        max_length=1000,
+        db_comment="The issue title when fetched from the GH API",
+        null=True,
+        blank=True,
+    )
+
     def url(self):
         return f"https://github.com/{self.org}/{self.repo}/issues/{self.issue_id}"
 

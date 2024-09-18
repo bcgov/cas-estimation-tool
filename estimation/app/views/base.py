@@ -3,6 +3,7 @@ import requests
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from estimation import settings
+from django.contrib.auth.decorators import login_required
 
 from ..models import EstimationSession, GithubIssue, GithubUser
 from ..view_models.dashboard_view_model import DashboardViewModel
@@ -10,9 +11,8 @@ from ..view_models.index_view_model import IndexViewModel
 
 
 def index(request: HttpRequest):
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print(request.session)
-    print(request.session.get("github_handle"))
+    if request.session["github_handle"]:
+        return redirect("dashboard")
     return render(request, "index.html", IndexViewModel())
 
 
