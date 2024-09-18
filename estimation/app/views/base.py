@@ -1,3 +1,4 @@
+import secrets
 import requests
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
@@ -9,16 +10,15 @@ from ..view_models.index_view_model import IndexViewModel
 
 
 def index(request: HttpRequest):
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(request.session)
+    print(request.session.get("github_handle"))
     return render(request, "index.html", IndexViewModel())
 
 
 def dashboard(request):
     avatar_url = request.session.get("avatar_url")
     github_handle = request.session.get("github_handle")
-
-    # Clear session variables if necessary
-    request.session.pop("avatar_url", None)
-    request.session.pop("github_handle", None)
 
     sample_estimation_sessions = [
         EstimationSession(
@@ -45,20 +45,26 @@ def dashboard(request):
     )
 
 
-def github_login(request):
+def github_login(request: HttpRequest):
+    request.session["state"] = secrets.token_urlsafe(16)
+
     # GitHub OAuth authorization URL
     github_auth_url = (
         "https://github.com/login/oauth/authorize?"
         f"client_id={settings.GITHUB_CLIENT_ID}&"
         f"redirect_uri={settings.GITHUB_REDIRECT_URI}&"
+        f"state={request.session['state']}&"
         "scope=repo"
     )
+
     return redirect(github_auth_url)
 
 
-def github_callback(request):
+def github_callback(request: HttpRequest):
     code = request.GET.get("code")
-    if not code:
+    state = request.GET.get("state")
+    if not code or state != request.session["state"]:
+        print("No code or state mismatch!")
         return redirect("index")  # Redirect to the main page if no code is present
 
     # Exchange the authorization code for an access token
@@ -112,6 +118,8 @@ def github_callback(request):
     print(result)  # Log the result for debugging
     request.session["avatar_url"] = avatar_url
     request.session["github_handle"] = github_handle
+
+    print(request.session)
 
     return redirect("dashboard")
 
