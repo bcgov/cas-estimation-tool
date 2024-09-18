@@ -40,7 +40,7 @@ def dashboard(request):
         "dashboard.html",
         DashboardViewModel(
             estimation_sessions=sample_estimation_sessions,
-            user=GithubUser(handle="pbastia", avatar_url=avatar_url),
+            user=GithubUser(handle=github_handle, avatar_url=avatar_url),
         ),
     )
 
