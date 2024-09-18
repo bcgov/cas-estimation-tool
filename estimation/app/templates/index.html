@@ -1,9 +1,16 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %} Welcome! {% endblock %}
+
+{% block title %} GitHub Async Estimation Tool {% endblock %}
 
 
 {% block content %}
-<button>Login with Github</button>
+<div class="w3-display-container" style="min-height: 400px">
+  <button class="w3-display-middle">
+    <img src={% static 'img/github-mark.png' %} style="height: 15px; margin-bottom: 2px" /> 
+    Login with Github
+  </button>
+</div>
 {% endblock %}
 
