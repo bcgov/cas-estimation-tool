@@ -1,12 +1,11 @@
 import requests
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
-from app.models import EstimationSession, GithubIssue, GithubUser
 from estimation import settings
 
-
-from .view_models.dashboard_view_model import DashboardViewModel
-from .view_models.index_view_model import IndexViewModel
+from ..models import EstimationSession, GithubIssue, GithubUser
+from ..view_models.dashboard_view_model import DashboardViewModel
+from ..view_models.index_view_model import IndexViewModel
 
 
 def index(request: HttpRequest):
