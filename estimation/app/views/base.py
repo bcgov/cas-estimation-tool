@@ -1,5 +1,7 @@
 import secrets
 import requests
+from django.utils import timezone
+from datetime import timedelta
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from estimation import settings
@@ -11,8 +13,27 @@ from ..view_models.index_view_model import IndexViewModel
 
 
 def index(request: HttpRequest):
-    if request.session["github_handle"]:
-        return redirect("dashboard")
+    github_handle = request.session.get("github_handle")
+    print("github_handle from session:", github_handle)
+
+    if github_handle:
+        github_user = GithubUser.objects.filter(handle=github_handle).first()
+
+        if github_user:
+            print("Found GithubUser:", github_user)
+            print("Access Token:", github_user.access_token)
+            print("Token Expiration:", github_user.token_expires)
+
+            if github_user.access_token and github_user.token_expires and github_user.token_expires > timezone.now():
+                print("Token is still valid")
+                request.session["avatar_url"] = github_user.avatar_url
+                return redirect("dashboard")
+            else:
+                print("Token is expired or missing")
+        else:
+            print("GithubUser with handle does not exist")
+
+    # Render the index page if not redirected
     return render(request, "index.html", IndexViewModel())
 
 
@@ -96,108 +117,28 @@ def github_callback(request: HttpRequest):
     if github_handle:
         # Check if the user already exists in the database
         github_user, created = GithubUser.objects.get_or_create(
-            handle=github_handle, defaults={"access_token": access_token}
+            handle=github_handle,
+            defaults={"access_token": access_token, "avatar_url": avatar_url}
         )
 
         if not created:
-            # If the user already exists, update the access token
+            # If the user already exists, check if the token is expired
+            if github_user.token_expires and github_user.token_expires > timezone.now():
+                # Token is still valid, redirect to dashboard
+                request.session["avatar_url"] = github_user.avatar_url
+                request.session["github_handle"] = github_handle
+                return redirect("dashboard")
+
+            # Update the access token and token information
             github_user.access_token = access_token
             github_user.avatar_url = avatar_url
+            github_user.token_created = timezone.now()
+            github_user.token_expires = github_user.token_created + timedelta(hours=1)
             github_user.save()
 
-    print(user_info)  # Optional: You can log user info for debugging
-
-    # Example values for demonstration purposes
-    project_url = "https://github.com/users/ayeshmcg/projects/1"
-    issue_url = "https://github.com/ayeshmcg/testRepo/issues/1"
-    story_points = 5
-
-    result = update_story_points_for_issue_card(
-        project_url, issue_url, story_points, access_token
-    )
-    print(result)  # Log the result for debugging
     request.session["avatar_url"] = avatar_url
     request.session["github_handle"] = github_handle
 
     print(request.session)
 
     return redirect("dashboard")
-
-
-def update_story_points_for_issue_card(
-    project_url, issue_url, story_points, access_token
-):
-    # Extract project ID from the URL
-    # project_match = re.match(r'https://github.com/orgs/[^/]+/projects/(\d+)', project_url)
-    # if not project_match:
-    #     return {'error': 'Invalid project URL format'}
-    #
-    # project_id = project_match.group(1)
-
-    # Extract issue number from the URL
-    # issue_match = re.match(r'https://github.com/[^/]+/[^/]+/issues/(\d+)', issue_url)
-    # if not issue_match:
-    #     return {'error': 'Invalid issue URL format'}
-    #
-    # issue_number = issue_match.group(1)
-
-    # Retrieve the project columns
-    columns_url = f"https://api.github.com/projects/1/columns"
-    headers = {
-        "Authorization": f"token {access_token}",
-        "Accept": "application/vnd.github+json",
-    }
-    columns_response = requests.get(columns_url, headers=headers)
-    if columns_response.status_code != 200:
-        return {
-            "error": f"Unable to retrieve columns: {columns_response.status_code}, {columns_response.text}"
-        }
-
-    columns = columns_response.json()
-
-    # Find the card in a column
-    card_id = None
-    for column in columns:
-        cards_url = f'https://api.github.com/projects/columns/{column["id"]}/cards'
-        cards_response = requests.get(cards_url, headers=headers)
-        if cards_response.status_code != 200:
-            return {
-                "error": f"Unable to retrieve cards: {cards_response.status_code}, {cards_response.text}"
-            }
-
-        cards = cards_response.json()
-        for card in cards:
-            if card.get("content_url") == issue_url:
-                card_id = card["id"]
-                break
-        if card_id:
-            break
-
-    if not card_id:
-        return {"error": "No card found for the specified issue URL"}
-
-    # Update the card with Story Points
-    card_url = f"https://api.github.com/projects/columns/cards/{card_id}"
-    card_response = requests.get(card_url, headers=headers)
-    if card_response.status_code != 200:
-        return {
-            "error": f"Unable to retrieve card details: {card_response.status_code}, {card_response.text}"
-        }
-
-    card_data = card_response.json()
-
-    print("card_data", card_data)
-    print("story_points", story_points)
-
-    # If the card is a note card, append the story points
-    # if 'note' in card_data:
-    #     updated_note = f"{card_data['note']}\n\nStory Points: {story_points}"
-    #     update_data = {'note': updated_note}
-    # else:
-    #     return {'error': 'This card is not a note card and cannot be updated'}
-    #
-    # update_response = requests.patch(card_url, json=update_data, headers=headers)
-    # if update_response.status_code == 200:
-    #     return {'success': 'Story Points added successfully'}
-    # else:
-    #     return {'error': f'Failed to add Story Points: {update_response.status_code}'}
