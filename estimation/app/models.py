@@ -6,6 +6,20 @@ class GithubUser(models.Model):
         max_length=1000,
         db_comment="The github handle for the user, without the '@github' part.",
     )
+    access_token = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        db_comment="GitHub access token for OAuth authentication."
+    )
+
+    avatar_url = models.URLField(blank=True, null=True)
+
+
+def __str__(self):
+        return self.handle
+
+
 
 
 class GithubIssue(models.Model):

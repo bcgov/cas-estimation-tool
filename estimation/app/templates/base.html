@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
-  {% load static %}
-  <head>
+{% load static %}
+<head>
     <!-- <link rel="icon" href="{% static 'img/favicon.ico' %}"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'styles/w3.css' %}" type="text/css" />
@@ -13,34 +13,31 @@
     <link rel="stylesheet" href="{% static 'styles/BCSans.css' %}" type="text/css" />
     <link rel="stylesheet" href="{% static 'styles/style.css' %}" type="text/css" />
     <title>{% block title %} {{ title }} {% endblock title %}</title>
-  </head>
-  <body>
-    <!-- Top Navigation -->
-    <div class="w3-top">
-      <div class="w3-bar w3-row" style="height: 50px">
-        <img src={% static 'img/bc_logo.png' %} style="height: 48px" class="w3-left"/>
-        <div class="w3-left w3-margin-left"><h4 style="font-weight: bold">GitHub Async Estimation Tool</h4></div>
-        {% if user.handle %}
-        <a
-          {% comment %} href="{% url 'github:logout' %}" {% endcomment %}
-          class="w3-bar-item w3-border-right w3-button w3-right"
-          >Logout
-        </a>
-        <button class="w3-button">{{ user.handle }}@github</button>
+</head>
+<body>
+<!-- Top Navigation -->
+<div class="w3-top">
+    <div class="w3-bar w3-theme-light w3-border">
+        {% if user.is_authenticated %}
+            <a
+                    href="{% url 'logout' %}"
+                    class="w3-bar-item w3-border-right w3-button"
+            >Logout
+            </a>
+            <button class="w3-button">Welcome, {{ user.username }}!</button>
+        {% else %}
+            <a
+                    href="{% url 'github_login' %}"
+                    class="w3-bar-item w3-border-right w3-button"
+            >Login with GitHub</a>
         {% endif %}
-      </div>
-      <div class="w3-bar w3-theme w3-border" style="height: 5px">
     </div>
-    <div class="w3-main">
-      <!-- Body -->
-      <div class="w3-container w3-responsive w3-text-theme">
+</div>
+<div class="w3-main">
+    <!-- Body -->
+    <div class="w3-container w3-responsive w3-text-theme">
         {% block content %} {% endblock content %}
-      </div>
     </div>
-    <div class="w3-bottom">
-      <div class="w3-bar w3-row w3-theme w3-border w3-white" style="height: 55px">
-        <div class="w3-left">DDS Hackathon 2024</div>
-      </div>
-    </div>
-  </body>
+</div>
+</body>
 </html>
