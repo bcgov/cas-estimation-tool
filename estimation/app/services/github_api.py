@@ -17,7 +17,6 @@ class GithubApi:
     def get_headers(self):
         github_user = GithubUser.objects.get(pk=self.user_handle)
         return {
-            "Authorization": f"Bearer {github_user.access_token}",
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
         }

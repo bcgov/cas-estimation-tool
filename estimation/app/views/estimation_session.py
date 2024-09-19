@@ -1,8 +1,8 @@
 from django.http import HttpRequest
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 import markdown
 
-from ..models import EstimationSession, GithubUser, Vote
+from ..models import EstimationSession, GithubUser, Vote, GithubIssue
 
 from ..view_models.estimation_session_view_model import EstimationSessionViewModel
 from ..services.github_api import GithubApi
@@ -31,7 +31,6 @@ def estimation_session(request: HttpRequest, session_id: int):
         .first()
     )
     print(current_vote)
-
     view_model = EstimationSessionViewModel(
         session_id=session_id,
         issue=estimation_session.issue,
@@ -40,7 +39,7 @@ def estimation_session(request: HttpRequest, session_id: int):
         votes=votes,
         allow_estimation=any(v.user.handle == logged_in_handle for v in votes),
         estimate_options=[1, 2, 3, 5, 8],
-        current_vote=None if current_vote is None else current_vote["vote"],
+        current_vote=None if current_vote is None else current_vote["vote"]
     )
 
     return render(request, "estimation_session.html", view_model)
@@ -70,14 +69,17 @@ def toggle_vote(request, session_id: int, vote: int):
     if not logged_in_handle:
         raise Exception("User must be logged in")
 
-    vote_model = Vote.objects.get(
+    # Use get_or_create to handle cases where the vote does not exist
+    vote_model, created = Vote.objects.get_or_create(
         estimation_session__id=session_id, user__handle=logged_in_handle
     )
 
+    # Toggle the vote
     if vote_model.vote == vote:
-        vote_model.vote = None
+        vote_model.vote = None  # Remove the votes
     else:
-        vote_model.vote = vote
+        vote_model.vote = vote  # Set the new vote
 
     vote_model.save()
+
     return redirect("estimation_session", session_id=session_id)

@@ -22,11 +22,15 @@ def confirm_issue(request: HttpRequest, issue_id: int):
 
 def start_estimation_session(request: HttpRequest, issue_id: int):
     if request.method != "POST":
-        raise Exception("this endpoint only accepts POST requests")
+        raise Exception("This endpoint only accepts POST requests")
 
     issue = GithubIssue.objects.get(id=issue_id)
 
+    # Create the estimation session
     estimation_session = EstimationSession(issue=issue)
     estimation_session.save()
 
+    # Redirect to the estimation session with the allow_estimation parameter
     return redirect("estimation_session", session_id=estimation_session.id)
+
+
