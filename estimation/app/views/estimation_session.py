@@ -1,14 +1,14 @@
 from django.http import HttpRequest
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 import markdown
 
-from ..models import EstimationSession, GithubUser, Vote
+from ..models import EstimationSession, GithubUser, Vote, GithubIssue
 
 from ..view_models.estimation_session_view_model import EstimationSessionViewModel
 from ..services.github_api import GithubApi
 
 
-def estimation_session(request: HttpRequest, session_id: int):
+def estimation_session(request: HttpRequest, session_id: int, allow_estimation=None):
     logged_in_handle = request.session.get("github_handle")
 
     gh_api = GithubApi(logged_in_handle)
@@ -32,15 +32,21 @@ def estimation_session(request: HttpRequest, session_id: int):
     )
     print(current_vote)
 
+    # Convert allow_estimation to a boolean if it's not None
+    if allow_estimation is not None:
+        allow_estimation = allow_estimation.lower() == 'true'
+    else:
+        allow_estimation = False  # Default value if not provided
+
     view_model = EstimationSessionViewModel(
         session_id=session_id,
         issue=estimation_session.issue,
         team_members=team_members,
         markdown_description=markdown.markdown(estimation_session.issue.body),
         votes=votes,
-        allow_estimation=any(v.user.handle == logged_in_handle for v in votes),
+        allow_estimation=allow_estimation or any(v.user.handle == logged_in_handle for v in votes),
         estimate_options=[1, 2, 3, 5, 8],
-        current_vote=None if current_vote is None else current_vote["vote"],
+        current_vote=None if current_vote is None else current_vote["vote"]
     )
 
     return render(request, "estimation_session.html", view_model)
@@ -64,20 +70,35 @@ def remove_member(request, session_id: int, handle: str):
     return redirect("estimation_session", session_id=session_id)
 
 
-def toggle_vote(request, session_id: int, vote: int):
+def toggle_vote(request, session_id: int, vote: int, allow_estimation: str = None):
     logged_in_handle = request.session.get("github_handle")
 
     if not logged_in_handle:
         raise Exception("User must be logged in")
 
-    vote_model = Vote.objects.get(
+    # Use get_or_create to handle cases where the vote does not exist
+    vote_model, created = Vote.objects.get_or_create(
         estimation_session__id=session_id, user__handle=logged_in_handle
     )
 
+    # Toggle the vote
     if vote_model.vote == vote:
-        vote_model.vote = None
+        vote_model.vote = None  # Remove the votes
     else:
-        vote_model.vote = vote
+        vote_model.vote = vote  # Set the new vote
 
     vote_model.save()
+
     return redirect("estimation_session", session_id=session_id)
+
+
+def create_estimation_session(request: HttpRequest, issue_id: int):
+    if request.method != "POST":
+        raise Exception("this endpoint only accepts POST requests")
+
+    issue = GithubIssue.objects.get(id=issue_id)
+
+    estimation_session = EstimationSession(issue=issue)
+    estimation_session.save()
+
+    return redirect("estimation_session", session_id=estimation_session.id)

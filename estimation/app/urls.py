@@ -21,6 +21,11 @@ urlpatterns = [
         name="estimation_session",
     ),
     path(
+        "estimation_session/<int:session_id>/allow_estimation/<str:allow_estimation>/",
+        views.estimation_session,
+        name="estimation_session",
+    ),
+    path(
         "estimation_session/<int:session_id>/add_member/<str:handle>/",
         views.add_member,
         name="add_member",
@@ -32,6 +37,11 @@ urlpatterns = [
     ),
     path(
         "estimation_session/<int:session_id>/toggle_vote/<int:vote>/",
+        views.toggle_vote,
+        name="toggle_vote",
+    ),
+    path(
+        "estimation_session/<int:session_id>/allow_estimation/<str:allow_estimation>/toggle_vote/<int:vote>/",
         views.toggle_vote,
         name="toggle_vote",
     ),

@@ -14,7 +14,6 @@
                         class="w3-circle"
                         style="width: 50px; height: 50px; border-radius: 50%"
                 />
-                <!-- Dynamically update the heading based on the presence of estimation sessions -->
                 <h3>
                     {% if estimation_sessions %}
                         Issues awaiting votes for {{ user.handle }}@github:
@@ -25,24 +24,22 @@
             </div>
         </div>
 
-            <!-- Display estimation sessions if available -->
-            <div class="w3-row w3-row-padding">
-                {% for estimation_session in estimation_sessions %}
-                    <div class="w3-col s6 m4 l3">
-                        <div
-                                class="w3-card-2 {% if estimation_session.is_open %} w3-green{% else %} w3-red{% endif %} w3-margin-bottom"
-                        >
+        <!-- Display estimation sessions if available -->
+        <div class="w3-row w3-row-padding">
+            {% for estimation_session in estimation_sessions %}
+                <div class="w3-col s6 m4 l3">
+                    <form method="POST" action="{% url 'start_estimation_session' estimation_session.issue.id %}?redirect=true">
+                        {% csrf_token %}
+                        <button type="submit" class="w3-card-2 {% if estimation_session.is_open %} w3-green{% else %} w3-red{% endif %} w3-margin-bottom" style="width: 100%; cursor: pointer;">
                             <div class="w3-container w3-center">
-                                <p>
-                                    Issue
-                                    {{ estimation_session.issue.repo }} / #{{ estimation_session.issue.issue_id }}
-                                </p>
+                                <p>Issue {{ estimation_session.issue.repo }} / #{{ estimation_session.issue.issue_id }}</p>
                                 <p>{{ estimation_session.issue.title }}</p>
                             </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
 
         <!-- Add Issue For Estimation button in its own row -->
         <div class="w3-row w3-margin-top">

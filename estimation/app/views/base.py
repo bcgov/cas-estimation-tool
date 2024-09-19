@@ -47,7 +47,7 @@ def dashboard(request):
     # Get user information from the session
     avatar_url = request.session.get("avatar_url")
     github_handle = request.session.get("github_handle")
-
+    # Fetch or create session data
     estimation_sessions = []
 
     if github_handle:
