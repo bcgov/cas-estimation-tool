@@ -36,6 +36,8 @@ ALLOWED_HOSTS = [
     "cas-estimation-tool.apps.silver.devops.gov.bc.ca",
 ]
 
+CSRF_TRUSTED_ORIGINS = ["https://cas-estimation-tool.apps.silver.devops.gov.bc.ca"]
+
 
 # Application definition
 

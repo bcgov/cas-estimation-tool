@@ -29,7 +29,7 @@ spec:
                 name: "cas-estimation-tool-github"
                 key: client_secret
           - name: GITHUB_REDIRECT_URI
-            value: https://console.apps.silver.devops.gov.bc.ca/github/callback/
+            value: https://cas-estimation-tool.apps.silver.devops.gov.bc.ca/github/callback/
           - name: TEAM_MEMBERS
             valueFrom:
               secretKeyRef: 
