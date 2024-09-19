@@ -5,7 +5,8 @@ from datetime import timedelta
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from estimation import settings
-from django.contrib.auth.decorators import login_required
+
+from ..services.github_api import GithubApi
 
 from ..models import EstimationSession, GithubIssue, GithubUser
 from ..view_models.dashboard_view_model import DashboardViewModel
@@ -24,7 +25,11 @@ def index(request: HttpRequest):
             print("Access Token:", github_user.access_token)
             print("Token Expiration:", github_user.token_expires)
 
-            if github_user.access_token and github_user.token_expires and github_user.token_expires > timezone.now():
+            if (
+                github_user.access_token
+                and github_user.token_expires
+                and github_user.token_expires > timezone.now()
+            ):
                 print("Token is still valid")
                 request.session["avatar_url"] = github_user.avatar_url
                 return redirect("dashboard")
@@ -43,15 +48,19 @@ def dashboard(request):
 
     sample_estimation_sessions = [
         EstimationSession(
-            issue=GithubIssue(org="bcgov", repo="cas-estimation-tool", issue_id=1),
+            issue=GithubIssue(org="bcgov", repo="cas-estimation-tool", issue_number=1),
             is_open=True,
         ),
         EstimationSession(
-            issue=GithubIssue(org="bcgov", repo="cas-estimation-tool", issue_id=155),
+            issue=GithubIssue(
+                org="bcgov", repo="cas-estimation-tool", issue_number=155
+            ),
             is_open=True,
         ),
         EstimationSession(
-            issue=GithubIssue(org="bcgov", repo="cas-estimation-tool", issue_id=65554),
+            issue=GithubIssue(
+                org="bcgov", repo="cas-estimation-tool", issue_number=65554
+            ),
             is_open=False,
         ),
     ]
@@ -118,7 +127,7 @@ def github_callback(request: HttpRequest):
         # Check if the user already exists in the database
         github_user, created = GithubUser.objects.get_or_create(
             handle=github_handle,
-            defaults={"access_token": access_token, "avatar_url": avatar_url}
+            defaults={"access_token": access_token, "avatar_url": avatar_url},
         )
 
         if not created:

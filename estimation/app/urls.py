@@ -9,6 +9,15 @@ urlpatterns = [
     path("dashboard/", views.dashboard, name="dashboard"),
     path("logout", views.logout, name="logout"),
     path("select_issue", views.select_issue, name="select_issue"),
-    path("confirm_issue", views.confirm_issue, name="confirm_issue"),
-    path("estimation_session", views.estimation_session, name="estimation_session"),
+    path("confirm_issue/<int:issue_id>/", views.confirm_issue, name="confirm_issue"),
+    path(
+        "start_estimation_session/<int:issue_id>/",
+        views.start_estimation_session,
+        name="start_estimation_session",
+    ),
+    path(
+        "estimation_session/<int:session_id>/",
+        views.estimation_session,
+        name="estimation_session",
+    ),
 ]

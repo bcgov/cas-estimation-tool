@@ -10,7 +10,7 @@
       <div class="w3-container w3-theme">
         <h2>Confirm issue to estimate</h2>
       </div>
-      <form action="confirm_issue" method="post" class="w3-container">
+      <form action="/start_estimation_session/{{ issue.id }}/" method="post" class="w3-container">
         {% csrf_token %}
         <div class="w3-row w3-margin">
           <div class="w3-col">
@@ -18,15 +18,12 @@
             <input id="issue_url" name="issue_url" class="w3-input" type="text" value="{{ issue_url }}" disabled/>
           </div>
         </div>
-        <input name="org" type="hidden" value="{{ issue.org }}" />
-        <input name="repo" type="hidden" value="{{ issue.repo }}" />
-        <input name="issue_id" type="hidden" value="{{ issue.issue_id }}" />
         <div class="w3-row w3-margin">
           <div class="w3-col" style="width: 120px;">
             <p>Issue details</p>
           </div>
           <div class="w3-rest">
-            <p>ID: {{ issue.issue_id }}</p>
+            <p>ID: {{ issue.issue_number }}</p>
             <p>Title: {{ issue.title }}</p>
           </div>
         </div>

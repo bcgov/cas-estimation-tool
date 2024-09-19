@@ -1,5 +1,5 @@
-from django.http import HttpRequest
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.contrib import messages
 
 from ..services.github_api import GithubApi
@@ -39,9 +39,11 @@ def select_issue(request: HttpRequest):
             )
 
         api_client = GithubApi(request.session["github_handle"])
-        gh_issue = api_client.get_issue(org, repo, issue_number)
 
-        print(gh_issue)
+        gh_issue = api_client.get_issue(org, repo, issue_number)
+        gh_issue.save()
+
+        return redirect("confirm_issue", issue_id=gh_issue.id)
 
         return render(
             request,

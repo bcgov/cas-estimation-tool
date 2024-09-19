@@ -29,7 +29,7 @@ class GithubIssue(models.Model):
     repo = models.CharField(
         max_length=1000, db_comment="The repository this issue belongs to."
     )
-    issue_id = models.IntegerField(db_comment="The issue number.")
+    issue_number = models.IntegerField(db_comment="The issue number.")
 
     title = models.CharField(
         max_length=1000,
@@ -37,9 +37,15 @@ class GithubIssue(models.Model):
         null=True,
         blank=True,
     )
+    body = models.CharField(
+        max_length=10000,
+        db_comment="The issue body when fetched from the github API, in markdown format",
+        null=True,
+        blank=True,
+    )
 
     def url(self):
-        return f"https://github.com/{self.org}/{self.repo}/issues/{self.issue_id}"
+        return f"https://github.com/{self.org}/{self.repo}/issues/{self.issue_number}"
 
 
 class EstimationSession(models.Model):
@@ -49,6 +55,8 @@ class EstimationSession(models.Model):
 
 
 class Vote(models.Model):
-    user = models.ForeignKey(GithubUser, on_delete=models.CASCADE)
-    estimation_session = models.ForeignKey(EstimationSession, on_delete=models.CASCADE)
-    vote = models.IntegerField(null=True, blank=True)
+    user = models.ForeignKey(GithubUser, on_delete=models.CASCADE, related_name="votes")
+    estimation_session = models.ForeignKey(
+        EstimationSession, on_delete=models.CASCADE, related_name="votes"
+    )
+    vote = models.IntegerField(null=True, blank=True, db_comment="The voted estimate.")
