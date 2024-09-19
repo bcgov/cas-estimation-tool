@@ -48,29 +48,24 @@ def dashboard(request):
     avatar_url = request.session.get("avatar_url")
     github_handle = request.session.get("github_handle")
     # Fetch or create session data
-    estimation_sessions = []
 
     if github_handle:
+
         user = get_object_or_404(GithubUser, handle=github_handle)
 
         votes = Vote.objects.filter(user=user)
+        print(votes)
+        estimation_session_ids = votes.values_list("estimation_session_id", flat=True)
+        print(estimation_session_ids)
 
-        estimation_session_ids = votes.values_list('estimation_session_id', flat=True)
+        estimation_sessions = (
+            EstimationSession.objects.filter(
+                id__in=estimation_session_ids
+            ).select_related("issue")
+        ).all()
 
-        if estimation_session_ids:
-            estimation_sessions_queryset = (
-                EstimationSession.objects
-                .filter(id__in=estimation_session_ids)
-                .select_related('issue')
-            )
+    print(estimation_sessions)
 
-            # Form the estimation sessions list
-            for session in estimation_sessions_queryset:
-                estimation_sessions.append(EstimationSession(
-                    issue=session.issue,
-                    is_open=session.is_open,
-                    final_estimate=session.final_estimate
-                ))
     return render(
         request,
         "dashboard.html",

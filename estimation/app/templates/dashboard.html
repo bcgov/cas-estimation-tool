@@ -28,13 +28,12 @@
         <div class="w3-row w3-row-padding">
             {% for estimation_session in estimation_sessions %}
                 <div class="w3-col s6 m4 l3">
-
-                        <a href="{% url 'estimation_session' session_id=estimation_session.id %}" class="w3-card-2 {% if estimation_session.is_open %} w3-green{% else %} w3-red{% endif %} w3-margin-bottom" style="width: 100%; cursor: pointer;">
-                            <div class="w3-container w3-center">
-                                <p>Issue {{ estimation_session.issue.repo }} / #{{ estimation_session.issue.issue_id }}</p>
-                                <p>{{ estimation_session.issue.title }}</p>
-                            </div>
-                        </a>
+                    <a href="{% url 'estimation_session' session_id=estimation_session.id %}" class="w3-card-2 w3-margin-bottom" style="width: 100%; cursor: pointer;">
+                        <div class="w3-container w3-center {% if estimation_session.is_open %} w3-green{% else %} w3-red{% endif %}">
+                            <p>Issue {{ estimation_session.issue.repo }} / #{{ estimation_session.issue.issue_id }}</p>
+                            <p>{{ estimation_session.issue.title }}</p>
+                        </div>
+                    </a>
                 </div>
             {% endfor %}
         </div>

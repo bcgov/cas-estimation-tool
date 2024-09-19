@@ -39,7 +39,7 @@ def estimation_session(request: HttpRequest, session_id: int):
         votes=votes,
         allow_estimation=any(v.user.handle == logged_in_handle for v in votes),
         estimate_options=[1, 2, 3, 5, 8],
-        current_vote=None if current_vote is None else current_vote["vote"]
+        current_vote=None if current_vote is None else current_vote["vote"],
     )
 
     return render(request, "estimation_session.html", view_model)
@@ -70,7 +70,7 @@ def toggle_vote(request, session_id: int, vote: int):
         raise Exception("User must be logged in")
 
     # Use get_or_create to handle cases where the vote does not exist
-    vote_model, created = Vote.objects.get_or_create(
+    vote_model = Vote.objects.get(
         estimation_session__id=session_id, user__handle=logged_in_handle
     )
 
