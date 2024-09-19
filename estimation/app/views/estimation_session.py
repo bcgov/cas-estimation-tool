@@ -31,20 +31,13 @@ def estimation_session(request: HttpRequest, session_id: int, allow_estimation=N
         .first()
     )
     print(current_vote)
-
-    # Convert allow_estimation to a boolean if it's not None
-    if allow_estimation is not None:
-        allow_estimation = allow_estimation.lower() == 'true'
-    else:
-        allow_estimation = False  # Default value if not provided
-
     view_model = EstimationSessionViewModel(
         session_id=session_id,
         issue=estimation_session.issue,
         team_members=team_members,
         markdown_description=markdown.markdown(estimation_session.issue.body),
         votes=votes,
-        allow_estimation=allow_estimation or any(v.user.handle == logged_in_handle for v in votes),
+        allow_estimation=any(v.user.handle == logged_in_handle for v in votes),
         estimate_options=[1, 2, 3, 5, 8],
         current_vote=None if current_vote is None else current_vote["vote"]
     )
@@ -70,7 +63,7 @@ def remove_member(request, session_id: int, handle: str):
     return redirect("estimation_session", session_id=session_id)
 
 
-def toggle_vote(request, session_id: int, vote: int, allow_estimation: str = None):
+def toggle_vote(request, session_id: int, vote: int):
     logged_in_handle = request.session.get("github_handle")
 
     if not logged_in_handle:
