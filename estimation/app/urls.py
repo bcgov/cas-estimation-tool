@@ -20,4 +20,14 @@ urlpatterns = [
         views.estimation_session,
         name="estimation_session",
     ),
+    path(
+        "estimation_session/<int:session_id>/add_member/<str:handle>/",
+        views.add_member,
+        name="estimation_session",
+    ),
+    path(
+        "estimation_session/<int:session_id>/remove_member/<str:handle>/",
+        views.remove_member,
+        name="estimation_session",
+    ),
 ]
