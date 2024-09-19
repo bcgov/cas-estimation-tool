@@ -8,3 +8,6 @@ class EstimationSessionViewModel(BaseViewModel):
     markdown_description: str
     team_members: List[GithubUser]
     votes: List[Vote]
+    allow_estimation: bool
+    estimate_options: List[int]
+    current_vote: int

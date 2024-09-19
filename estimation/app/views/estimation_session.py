@@ -9,8 +9,9 @@ from ..services.github_api import GithubApi
 
 
 def estimation_session(request: HttpRequest, session_id: int):
+    logged_in_handle = request.session.get("github_handle")
 
-    gh_api = GithubApi(request.session.get("github_handle"))
+    gh_api = GithubApi(logged_in_handle)
     team_members = gh_api.get_team_members("bcgov", "cas")
 
     estimation_session = EstimationSession.objects.get(id=session_id)
@@ -21,11 +22,24 @@ def estimation_session(request: HttpRequest, session_id: int):
     team_members = list(set(team_members) - set([v.user for v in votes]))
     team_members.sort(key=lambda u: u.handle.lower())
 
+    current_vote = (
+        Vote.objects.filter(
+            estimation_session__id=session_id,
+            user__handle=logged_in_handle,
+        )
+        .values("vote")
+        .first()
+    )
+    print(current_vote)
+
     view_model = EstimationSessionViewModel(
         issue=estimation_session.issue,
         team_members=team_members,
         markdown_description=markdown.markdown(estimation_session.issue.body),
         votes=votes,
+        allow_estimation=any(v.user.handle == logged_in_handle for v in votes),
+        estimate_options=[1, 2, 3, 5, 8],
+        current_vote=None if current_vote is None else current_vote["vote"],
     )
 
     return render(request, "estimation_session.html", view_model)

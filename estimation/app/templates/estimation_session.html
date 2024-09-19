@@ -37,7 +37,7 @@
                       {% for team_member in team_members %}
                       <li class="w3-display-container">
                         {{ team_member.handle }}@github 
-                        <button type="submit" formaction="add_member/{{ team_member.handle }}/" class="w3-button w3-padding-small w3-theme w3-display-right" style="margin-right: 5px;">Add</a>
+                        <button type="submit" formaction="add_member/{{ team_member.handle }}/" class="w3-button w3-padding-small w3-theme w3-display-right" style="margin-right: 5px;">Add</button>
                       </li>
                       {% endfor %}
                     </ul>
@@ -55,13 +55,37 @@
                         {% endif %}
                         &nbsp;&nbsp;
                         {{ vote.user.handle }} 
-                        <button type="submit" formaction="remove_member/{{ vote.user.handle }}/" class="w3-button w3-padding-small w3-theme w3-display-right" style="margin-right: 5px;">Remove</a>
+                        <button type="submit" formaction="remove_member/{{ vote.user.handle }}/" class="w3-button w3-padding-small w3-theme w3-display-right" style="margin-right: 5px;">Remove</button>
                       </li>
                       {% endfor %}
                     </ul>
                   </div>
                 </div>
               </form>
+            </div>
+            {% if allow_estimation %}
+            <div class="w3-row">
+              <h3>Estimate Issue</h3>
+            </div>
+            <div class="w3-row w3-padding">
+              <form method='POST'>
+                {% csrf_token %}
+                {% for estimate_option in estimate_options %}
+                <button type="submit" formaction="toggle_estimate/{{ estimate_option }}/" class="w3-button {% if current_vote == estimate_option %}w3-yellow{% else %}w3-theme{% endif %}" style="margin-right: 5px;">
+                  {{ estimate_option }}
+                </button>
+                {% endfor %}
+              </form>
+            </div>
+            {% endif %}
+            <div class="w3-row">
+              &nbsp;
+            </div>
+            <div class="w3-row w3-container w3-center">
+               <a class="w3-button w3-large w3-padding w3-theme" style="margin-right: 5px;">Reveal Estimates</a>
+            </div>
+            <div class="w3-row">
+              &nbsp;
             </div>
           </div>
         </div>
