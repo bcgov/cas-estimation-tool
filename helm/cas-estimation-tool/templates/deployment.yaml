@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "cas-estimation-tool.fullname" . }}
+  labels: {{ include "cas-estimation-tool.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels: {{ include "cas-estimation-tool.selectorLabels" . | nindent 6 }}
+  replicas: 1
+  template:
+    metadata:
+      labels: {{ include "cas-estimation-tool.labels" . | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-registry
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "ghcr.io/bcgov/cas-estimation-tool:latest"
+          imagePullPolicy: Always
+          env:
+          - name: GITHUB_CLIENT_ID
+            valueFrom:
+              secretKeyRef: 
+                name: "cas-estimation-tool-github"
+                key: client_id
+          - name: GITHUB_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef: 
+                name: "cas-estimation-tool-github"
+                key: client_secret
+          - name: TEAM_MEMBERS
+            valueFrom:
+              secretKeyRef: 
+                name: "cas-estimation-tool-github"
+                key: team_members
+          - name: PGDATABASE
+            value: estimation
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.databaseSecretName }}"
+                key: user
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.databaseSecretName }}"
+                key: password
+          - name: PGHOST
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.databaseSecretName }}"
+                key: host
+          - name: PGPORT
+            value: "5432"
+      
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 25m
+              memory: 512Mi

@@ -81,7 +81,7 @@ WSGI_APPLICATION = "estimation.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("PGDATBASE", "estimation"),  # database name
+        "NAME": os.environ.get("PGDATABASE", "estimation"),  # database name
         "USER": os.environ.get("PGUSER", "postgres"),
         "PASSWORD": os.environ.get("PGPASSWORD"),
         "HOST": os.environ.get("PGHOST", "localhost"),
@@ -123,12 +123,13 @@ USE_I18N = True
 
 USE_TZ = True
 
-#github details
+# github details
 
-GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
-GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')
-GITHUB_REDIRECT_URI = os.environ.get('GITHUB_REDIRECT_URI', 'http://localhost:8000/github/callback/')
-
+GITHUB_CLIENT_ID = os.environ.get("GITHUB_CLIENT_ID", "")
+GITHUB_CLIENT_SECRET = os.environ.get("GITHUB_CLIENT_SECRET", "")
+GITHUB_REDIRECT_URI = os.environ.get(
+    "GITHUB_REDIRECT_URI", "http://localhost:8000/github/callback/"
+)
 
 
 # Static files (CSS, JavaScript, Images)

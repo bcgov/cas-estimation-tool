@@ -1,5 +1,5 @@
 postgresCluster:
-  storageSize: 512Mi
+  storageSize: 400Mi
   postgres:
     replicaCount: 2
   pgbouncer:
