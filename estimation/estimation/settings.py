@@ -29,7 +29,14 @@ SECRET_KEY = "django-insecure-xxzh1o%y%a9rhm1!8=3@&w#f%1+rng^l3w9$bnfz@u_xq9=%o^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "0.0.0.0",
+    "localhost",
+    "127.0.0.1",
+    "cas-estimation-tool.apps.silver.devops.gov.bc.ca",
+]
+
+CSRF_TRUSTED_ORIGINS = ["https://cas-estimation-tool.apps.silver.devops.gov.bc.ca"]
 
 
 # Application definition
@@ -81,7 +88,7 @@ WSGI_APPLICATION = "estimation.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("PGDATBASE", "estimation"),  # database name
+        "NAME": os.environ.get("PGDATABASE", "estimation"),  # database name
         "USER": os.environ.get("PGUSER", "postgres"),
         "PASSWORD": os.environ.get("PGPASSWORD"),
         "HOST": os.environ.get("PGHOST", "localhost"),
@@ -123,12 +130,13 @@ USE_I18N = True
 
 USE_TZ = True
 
-#github details
+# github details
 
-GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
-GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')
-GITHUB_REDIRECT_URI = os.environ.get('GITHUB_REDIRECT_URI', 'http://localhost:8000/github/callback/')
-
+GITHUB_CLIENT_ID = os.environ.get("GITHUB_CLIENT_ID", "")
+GITHUB_CLIENT_SECRET = os.environ.get("GITHUB_CLIENT_SECRET", "")
+GITHUB_REDIRECT_URI = os.environ.get(
+    "GITHUB_REDIRECT_URI", "http://localhost:8000/github/callback/"
+)
 
 
 # Static files (CSS, JavaScript, Images)
