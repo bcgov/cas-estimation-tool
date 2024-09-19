@@ -7,8 +7,9 @@ from django.shortcuts import render, redirect
 from estimation import settings
 
 from ..services.github_api import GithubApi
+from django.shortcuts import render, get_object_or_404
 
-from ..models import EstimationSession, GithubIssue, GithubUser
+from ..models import EstimationSession, GithubIssue, GithubUser, Vote
 from ..view_models.dashboard_view_model import DashboardViewModel
 from ..view_models.index_view_model import IndexViewModel
 
@@ -43,33 +44,38 @@ def index(request: HttpRequest):
 
 
 def dashboard(request):
+    # Get user information from the session
     avatar_url = request.session.get("avatar_url")
     github_handle = request.session.get("github_handle")
 
-    sample_estimation_sessions = [
-        EstimationSession(
-            issue=GithubIssue(org="bcgov", repo="cas-estimation-tool", issue_number=1),
-            is_open=True,
-        ),
-        EstimationSession(
-            issue=GithubIssue(
-                org="bcgov", repo="cas-estimation-tool", issue_number=155
-            ),
-            is_open=True,
-        ),
-        EstimationSession(
-            issue=GithubIssue(
-                org="bcgov", repo="cas-estimation-tool", issue_number=65554
-            ),
-            is_open=False,
-        ),
-    ]
+    estimation_sessions = []
 
+    if github_handle:
+        user = get_object_or_404(GithubUser, handle=github_handle)
+
+        votes = Vote.objects.filter(user=user)
+
+        estimation_session_ids = votes.values_list('estimation_session_id', flat=True)
+
+        if estimation_session_ids:
+            estimation_sessions_queryset = (
+                EstimationSession.objects
+                .filter(id__in=estimation_session_ids)
+                .select_related('issue')
+            )
+
+            # Form the estimation sessions list
+            for session in estimation_sessions_queryset:
+                estimation_sessions.append(EstimationSession(
+                    issue=session.issue,
+                    is_open=session.is_open,
+                    final_estimate=session.final_estimate
+                ))
     return render(
         request,
         "dashboard.html",
         DashboardViewModel(
-            estimation_sessions=sample_estimation_sessions,
+            estimation_sessions=estimation_sessions,
             user=GithubUser(handle=github_handle, avatar_url=avatar_url),
         ),
     )
