@@ -2,7 +2,9 @@ name: Build estimation tool
 
 on:
   push:
-    branches: '*'
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
 
 jobs:
   docker-build:
