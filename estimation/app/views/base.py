@@ -6,10 +6,9 @@ from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from estimation import settings
 
-from ..services.github_api import GithubApi
 from django.shortcuts import render, get_object_or_404
 
-from ..models import EstimationSession, GithubIssue, GithubUser, Vote
+from ..models import GithubUser, Vote
 from ..view_models.dashboard_view_model import DashboardViewModel
 from ..view_models.index_view_model import IndexViewModel
 
@@ -54,15 +53,14 @@ def dashboard(request):
         user = get_object_or_404(GithubUser, handle=github_handle)
 
         votes = Vote.objects.filter(user=user)
-        print(votes)
-        estimation_session_ids = votes.values_list("estimation_session_id", flat=True)
-        print(estimation_session_ids)
 
-        estimation_sessions = (
-            EstimationSession.objects.filter(
-                id__in=estimation_session_ids
-            ).select_related("issue")
-        ).all()
+        estimation_sessions = [
+            {
+                "has_voted": (vote.vote is not None),
+                "estimation_session": vote.estimation_session,
+            }
+            for vote in votes
+        ]
 
     print(estimation_sessions)
 
