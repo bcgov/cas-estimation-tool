@@ -1,0 +1,38 @@
+
+{% extends "base.html" %} 
+
+{% block title %} Select Issue {% endblock %} 
+
+{% block content %}
+<div class="w3-row w3-padding-32">
+  <div class="w3-col">
+    <div class="w3-card-4">
+      <div class="w3-container w3-theme">
+        <h2>Issue #{{ issue.issue_number }}: {{ issue.title }}</h2>
+      </div>
+      <div class="w3-container">
+        <div class="w3-row">
+          <div class="w3-col s6">
+            <div class="w3-row">
+              <div class="w3-col">
+                <h3>stuff</h3>
+              </div>
+            </div>
+            <div class="w3-row">
+              <div class="w3-col">
+                stuff
+              </div>
+            </div>
+          </div>
+          <div class="w3-col s6">
+            <div class="w3-row">
+              <h3>more stuff</h3>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
