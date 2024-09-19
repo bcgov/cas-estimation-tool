@@ -61,3 +61,22 @@ def remove_member(request, session_id: int, handle: str):
     vote.delete()
 
     return redirect("estimation_session", session_id=session_id)
+
+
+def toggle_vote(request, session_id: int, vote: int):
+    logged_in_handle = request.session.get("github_handle")
+
+    if not logged_in_handle:
+        raise Exception("User must be logged in")
+
+    vote_model = Vote.objects.get(
+        estimation_session__id=session_id, user__handle=logged_in_handle
+    )
+
+    if vote_model.vote == vote:
+        vote_model.vote = None
+    else:
+        vote_model.vote = vote
+
+    vote_model.save()
+    return redirect("estimation_session", session_id=session_id)

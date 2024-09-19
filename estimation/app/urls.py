@@ -30,4 +30,9 @@ urlpatterns = [
         views.remove_member,
         name="estimation_session",
     ),
+    path(
+        "estimation_session/<int:session_id>/toggle_vote/<int:vote>/",
+        views.toggle_vote,
+        name="estimation_session",
+    ),
 ]

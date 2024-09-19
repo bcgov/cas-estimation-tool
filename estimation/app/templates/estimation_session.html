@@ -71,7 +71,7 @@
               <form method='POST'>
                 {% csrf_token %}
                 {% for estimate_option in estimate_options %}
-                <button type="submit" formaction="toggle_estimate/{{ estimate_option }}/" class="w3-button {% if current_vote == estimate_option %}w3-yellow{% else %}w3-theme{% endif %}" style="margin-right: 5px;">
+                <button type="submit" formaction="toggle_vote/{{ estimate_option }}/" class="w3-button {% if current_vote == estimate_option %}w3-yellow{% else %}w3-theme{% endif %}" style="margin-right: 5px;">
                   {{ estimate_option }}
                 </button>
                 {% endfor %}
