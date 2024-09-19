@@ -33,6 +33,7 @@ def estimation_session(request: HttpRequest, session_id: int):
     print(current_vote)
 
     view_model = EstimationSessionViewModel(
+        session_id=session_id,
         issue=estimation_session.issue,
         team_members=team_members,
         markdown_description=markdown.markdown(estimation_session.issue.body),

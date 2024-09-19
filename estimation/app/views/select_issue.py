@@ -45,10 +45,5 @@ def select_issue(request: HttpRequest):
 
         return redirect("confirm_issue", issue_id=gh_issue.id)
 
-        return render(
-            request,
-            "confirm_issue.html",
-            ConfirmIssueViewModel(issue=gh_issue, issue_url=issue_url),
-        )
     else:
         return render(request, "select_issue.html", SelectIssueViewModel())

@@ -23,16 +23,21 @@ urlpatterns = [
     path(
         "estimation_session/<int:session_id>/add_member/<str:handle>/",
         views.add_member,
-        name="estimation_session",
+        name="add_member",
     ),
     path(
         "estimation_session/<int:session_id>/remove_member/<str:handle>/",
         views.remove_member,
-        name="estimation_session",
+        name="remove_member",
     ),
     path(
         "estimation_session/<int:session_id>/toggle_vote/<int:vote>/",
         views.toggle_vote,
-        name="estimation_session",
+        name="toggle_vote",
+    ),
+    path(
+        "estimation_session/<int:session_id>/reveal_estimates/",
+        views.reveal_estimates,
+        name="reveal_estimates",
     ),
 ]
