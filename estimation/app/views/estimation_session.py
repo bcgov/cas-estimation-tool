@@ -8,7 +8,7 @@ from ..view_models.estimation_session_view_model import EstimationSessionViewMod
 from ..services.github_api import GithubApi
 
 
-def estimation_session(request: HttpRequest, session_id: int, allow_estimation=None):
+def estimation_session(request: HttpRequest, session_id: int):
     logged_in_handle = request.session.get("github_handle")
 
     gh_api = GithubApi(logged_in_handle)
@@ -83,15 +83,3 @@ def toggle_vote(request, session_id: int, vote: int):
     vote_model.save()
 
     return redirect("estimation_session", session_id=session_id)
-
-
-def create_estimation_session(request: HttpRequest, issue_id: int):
-    if request.method != "POST":
-        raise Exception("this endpoint only accepts POST requests")
-
-    issue = GithubIssue.objects.get(id=issue_id)
-
-    estimation_session = EstimationSession(issue=issue)
-    estimation_session.save()
-
-    return redirect("estimation_session", session_id=estimation_session.id)
