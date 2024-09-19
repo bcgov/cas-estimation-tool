@@ -1,0 +1,17 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ include "cas-estimation-tool.fullname" . }}-db-access
+  labels: {{ include "cas-estimation-tool.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: cas-estimation-db
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              release: {{ include "cas-estimation-tool.name" . }}
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ include "cas-estimation-tool.name" . }}
