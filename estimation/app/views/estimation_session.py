@@ -6,7 +6,7 @@ from ..view_models.estimation_session_view_model import EstimationSessionViewMod
 from ..services.github_api import GithubApi
 
 
-def estimation_session(request: HttpRequest):
+def estimation_session(request: HttpRequest, session_id: int):
 
     gh_api = GithubApi(request.session.get("github_handle"))
     team_members = gh_api.get_team_members("bcgov", "cas")

@@ -55,6 +55,8 @@ class EstimationSession(models.Model):
 
 
 class Vote(models.Model):
-    user = models.ForeignKey(GithubUser, on_delete=models.CASCADE)
-    estimation_session = models.ForeignKey(EstimationSession, on_delete=models.CASCADE)
-    vote = models.IntegerField(null=True, blank=True)
+    user = models.ForeignKey(GithubUser, on_delete=models.CASCADE, related_name="votes")
+    estimation_session = models.ForeignKey(
+        EstimationSession, on_delete=models.CASCADE, related_name="votes"
+    )
+    vote = models.IntegerField(null=True, blank=True, db_comment="The voted estimate.")

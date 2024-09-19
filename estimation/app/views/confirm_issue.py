@@ -1,7 +1,7 @@
 from django.http import HttpRequest, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
-from ..models import GithubIssue
+from ..models import EstimationSession, GithubIssue
 from ..view_models.confirm_issue_view_model import ConfirmIssueViewModel
 
 
@@ -18,3 +18,15 @@ def confirm_issue(request: HttpRequest, issue_id: int):
         "confirm_issue.html",
         ConfirmIssueViewModel(issue=issue, issue_url=issue.url()),
     )
+
+
+def start_estimation_session(request: HttpRequest, issue_id: int):
+    if request.method != "POST":
+        raise Exception("this endpoint only accepts POST requests")
+
+    issue = GithubIssue.objects.get(id=issue_id)
+
+    estimation_session = EstimationSession(issue=issue)
+    estimation_session.save()
+
+    return redirect("estimation_session", session_id=estimation_session.id)

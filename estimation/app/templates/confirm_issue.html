@@ -10,7 +10,7 @@
       <div class="w3-container w3-theme">
         <h2>Confirm issue to estimate</h2>
       </div>
-      <form action="/start_estimation_session/{{ issue.id }}" method="post" class="w3-container">
+      <form action="/start_estimation_session/{{ issue.id }}/" method="post" class="w3-container">
         {% csrf_token %}
         <div class="w3-row w3-margin">
           <div class="w3-col">
