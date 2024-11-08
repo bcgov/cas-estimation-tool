@@ -10,6 +10,7 @@ Only once:
 
 ```
 python -m venv ./env/
+pip install -r requirements.txt
 ```
 
 Then, every time we start developing:
@@ -18,4 +19,10 @@ Then, every time we start developing:
 source ./env/bin/activate
 ```
 
-Database: Postgres
+Database: a local Postgres 14+ available
+
+Run the app:
+```
+cd estimation
+python manage.py runserver
+```
